@@ -29,21 +29,22 @@ namespace GameCore.Services.SessionService
             CreatePlayers();
         }
 
+        //TODO: move this part to individual factory? or create array for store info about player params for mode
         private void CreatePlayers()
         {
             switch (_sessionSettings.BattleType)
             {
                 case SessionBattleType.PlayerVsPlayer:
-                    _playerOne = _playerFactory.Create(PlayerControllerType.User);
-                    _playerTwo = _playerFactory.Create(PlayerControllerType.User);
+                    _playerOne = _playerFactory.Create(PlayerSide.Player1, PlayerControllerType.User);
+                    _playerTwo = _playerFactory.Create(PlayerSide.Player2, PlayerControllerType.User);
                     break;
                 case SessionBattleType.PlayerVsBot:
-                    _playerOne = _playerFactory.Create(PlayerControllerType.User);
-                    _playerTwo = _playerFactory.Create(PlayerControllerType.Bot);
+                    _playerOne = _playerFactory.Create(PlayerSide.Player1, PlayerControllerType.User);
+                    _playerTwo = _playerFactory.Create(PlayerSide.Player2, PlayerControllerType.Bot);
                     break;
                 case SessionBattleType.BotVsBot:
-                    _playerOne = _playerFactory.Create(PlayerControllerType.Bot);
-                    _playerTwo = _playerFactory.Create(PlayerControllerType.Bot);
+                    _playerOne = _playerFactory.Create(PlayerSide.Player1, PlayerControllerType.Bot);
+                    _playerTwo = _playerFactory.Create(PlayerSide.Player2, PlayerControllerType.Bot);
                     break;
             }
         }

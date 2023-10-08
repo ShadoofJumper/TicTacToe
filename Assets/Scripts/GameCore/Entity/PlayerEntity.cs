@@ -2,16 +2,10 @@
 
 namespace GameCore.Entity
 {
+    //TODO: maybe remove struct if it will store just one variable
     public struct Step
     {
-        public int Row;
-        public int Cell;
-
-        public Step(int row, int cell)
-        {
-            Row = row;
-            Cell = cell;
-        }
+        public int CellIndex;
     }
     
     public class PlayerEntity
@@ -32,9 +26,9 @@ namespace GameCore.Entity
             _stepController.StarStep();
         }
 
-        private void OnCompleteStep(int cell, int row)
+        private void OnCompleteStep(int cellIndex)
         {
-            _steps.Push(new Step(cell, row));
+            _steps.Push(new Step(){CellIndex = cellIndex});
         }
         
         public void UnDoStep()

@@ -18,14 +18,17 @@ namespace GameCore.Services.GameMechanicsService
 
         private const int FieldSize = 9;
         
-        private const int FreeCell = 0;
-        private const int Player1Cell = 1;
-        private const int Player2Cell = 2;
+        private const int FreeCellValue = 0;
+        private const int Player1CellValue = 1;
+        private const int Player2CellValue = 2;
 
         
         private int[] _currentField;
 
         private PlayerSide _currentPlayerStep;
+
+        public int[] Field => _currentField;
+        public int FreeCell => FreeCellValue;
 
         public GameMechanicsService(GameSessionService gameSessionService)
         {
@@ -42,10 +45,10 @@ namespace GameCore.Services.GameMechanicsService
         public bool SetMark(PlayerSide playerSide, int cell, int row)
         {
             int cellIndex = GetCellIndex(row, cell);
-            if (_currentField[cellIndex] != FreeCell)
+            if (_currentField[cellIndex] != FreeCellValue)
                 return false;
 
-            _currentField[cellIndex] = playerSide == PlayerSide.Player1 ? Player1Cell : Player2Cell;
+            _currentField[cellIndex] = playerSide == PlayerSide.Player1 ? Player1CellValue : Player2CellValue;
             CheckCompleteGame();
             return true;
         }

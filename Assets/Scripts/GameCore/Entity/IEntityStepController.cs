@@ -4,7 +4,7 @@ namespace GameCore.Entity
 {
     public interface IEntityStepController
     {
-        event Action<int, int> OnCompleteStep;
+        event Action<int> OnCompleteStep;
         void StarStep();
     }
 }

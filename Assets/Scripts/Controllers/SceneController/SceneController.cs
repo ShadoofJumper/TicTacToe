@@ -37,9 +37,8 @@ namespace Controllers.SceneController
             _backgroundSpriteRenderer.sprite = playerSprite;
         }
         
-        public void PlaceMark(PlayerSide playerSide, int row, int cell)
+        public void PlaceMark(PlayerSide playerSide, int cellIndex)
         {
-            int cellIndex = GetCellIndex(row, cell);
             if(_fieldMarks[cellIndex] != null)
                 Destroy(_fieldMarks[cellIndex]);
         }
@@ -56,7 +55,7 @@ namespace Controllers.SceneController
             return playerSide == PlayerSide.Player1 ? _player1Mark : _player2Mark;
         }
         
-        private int GetCellIndex(int row, int cell) => cell + row * 3;
+        //private int GetCellIndex(int row, int cell) => cell + row * 3;
         
         private Vector3 GetCellPosition(int cellIndex)
         {
