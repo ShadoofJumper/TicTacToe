@@ -1,4 +1,5 @@
 ﻿using GameCore.Entity;
+using GameCore.Services.SessionService;
 using Zenject;
 
 namespace GameCore.Services.GameMechanicsService
@@ -11,6 +12,7 @@ namespace GameCore.Services.GameMechanicsService
     }
     public class GameMechanicsService : IGameMechanicsService, IInitializable
     {
+        private GameSessionService _gameSessionService;
         private PlayerEntity _player1;
         private PlayerEntity _player2;
 
@@ -24,12 +26,17 @@ namespace GameCore.Services.GameMechanicsService
         private int[] _currentField;
 
         private PlayerSide _currentPlayerStep;
+
+        public GameMechanicsService(GameSessionService gameSessionService)
+        {
+            _gameSessionService = gameSessionService;
+        }
         
         public void Initialize()
         {
             _currentField = new int[FieldSize];
-            
-            //here cell factor for crete player 1 and player 2
+            _player1 = _gameSessionService.PlayerOne;
+            _player2 = _gameSessionService.PlayerTwo;
         }
         
         public bool SetMark(PlayerSide playerSide, int cell, int row)
