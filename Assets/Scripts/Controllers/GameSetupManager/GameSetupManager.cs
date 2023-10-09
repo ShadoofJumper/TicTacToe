@@ -10,7 +10,7 @@ namespace Controllers.GameSetupManager
     
     public class GameSetupManager : IInitializable
     {
-        private const string BattleSceneName = "GameScene";
+        private const string BattleSceneName = "GamePlayScene";
         
         private SessionSettings _currentSessionSettings;
         
