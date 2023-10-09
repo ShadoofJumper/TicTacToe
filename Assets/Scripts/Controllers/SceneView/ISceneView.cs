@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 
-namespace Controllers.SceneController
+namespace Controllers.SceneView
 {
-    public interface ISceneController
+    public interface ISceneView
     {
+        void ShowHintCell(int cellIndex);
         void SetPlayerMark(PlayerSide playerSprite, Sprite markSprite);
         void SetPlayground(Sprite playerSprite);
         void PlaceMark(PlayerSide playerSide, int cellIndex);

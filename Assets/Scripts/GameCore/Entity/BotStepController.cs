@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using Controllers.SceneController;
+using Controllers.SceneView;
 using Random = UnityEngine.Random;
 
 namespace GameCore.Entity
@@ -8,23 +8,23 @@ namespace GameCore.Entity
     public class BotStepController : IEntityStepController
     {
         private IGameMechanicsService _gameMechanicsService;
-        private ISceneController _sceneController;
+        private ISceneView _sceneView;
 
         private PlayerSide _playerSide;
         public event Action<int> OnCompleteStep;
 
-        public BotStepController(PlayerSide playerSide, IGameMechanicsService gameMechanicsService, ISceneController sceneController)
+        public BotStepController(PlayerSide playerSide, IGameMechanicsService gameMechanicsService, ISceneView sceneView)
         {
             _playerSide = playerSide;
             _gameMechanicsService = gameMechanicsService;
-            _sceneController = sceneController;
+            _sceneView = sceneView;
         }
         
         public void StarStep()
         {
             //here logic for check game field
             int cellIndex = GetFreeCellIndex();
-            _sceneController.PlaceMark(_playerSide, cellIndex);
+            _sceneView.PlaceMark(_playerSide, cellIndex);
             OnCompleteStep?.Invoke(cellIndex);
         }
 

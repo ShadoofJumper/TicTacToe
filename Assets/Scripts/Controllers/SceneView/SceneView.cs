@@ -1,15 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Controllers.SceneController
+namespace Controllers.SceneView
 {
-    public class SceneController : MonoBehaviour, ISceneController
+    public class SceneView : MonoBehaviour, ISceneView
     {
         [SerializeField] private SpriteRenderer _backgroundSpriteRenderer;
-        [SerializeField] private Transform[] _fieldCells = new Transform[]{};
-        [SerializeField] private GameObject _markPrefab;
+        [SerializeField] private BoxCollider2D[] _fieldCells = new BoxCollider2D[]{};
         [SerializeField] private Transform _marksParent;
+
+        //todo: move prefabs to other access point?
+        [SerializeField] private GameObject _markPrefab;
+        [SerializeField] private GameObject _hintPrefab;
 
         private const int FieldSize = 9; 
         
@@ -18,6 +19,13 @@ namespace Controllers.SceneController
 
         private GameObject[] _fieldMarks = new GameObject[FieldSize];
 
+
+        public void ShowHintCell(int cellIndex)
+        {
+            Vector3 hintPos = GetCellPosition(cellIndex);
+            //note: mark will self destroy
+            Instantiate(_hintPrefab, hintPos, Quaternion.identity);
+        }
 
         public void SetPlayerMark(PlayerSide playerSprite, Sprite markSprite)
         {
@@ -41,6 +49,7 @@ namespace Controllers.SceneController
         {
             if(_fieldMarks[cellIndex] != null)
                 Destroy(_fieldMarks[cellIndex]);
+            PaintMark(playerSide, cellIndex);
         }
 
         
@@ -61,7 +70,7 @@ namespace Controllers.SceneController
         {
             if (_fieldCells[cellIndex] == null)
                 Debug.LogError("[SceneController] Cant get field cell position");
-            return _fieldCells[cellIndex].position;
+            return _fieldCells[cellIndex].transform.position;
         }
     }
 }

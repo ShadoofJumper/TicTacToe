@@ -1,16 +1,16 @@
-using Controllers.SceneController;
+using Controllers.SceneView;
 
 namespace GameCore.Entity.PlayerFactory
 {
     public class PlayerFactory : IPlayerFactory
     {
         private IGameMechanicsService _gameMechanicsService;
-        private ISceneController _sceneController;
+        private ISceneView _sceneView;
 
-        public PlayerFactory(IGameMechanicsService gameMechanicsService, ISceneController sceneController)
+        public PlayerFactory(IGameMechanicsService gameMechanicsService, ISceneView sceneView)
         {
             _gameMechanicsService = gameMechanicsService;
-            _sceneController = sceneController;
+            _sceneView = sceneView;
         }
         
         public PlayerEntity Create(PlayerSide playerSide, PlayerControllerType controllerType)
@@ -25,7 +25,7 @@ namespace GameCore.Entity.PlayerFactory
             switch (controllerType)
             {
                 case PlayerControllerType.Bot:
-                    return new BotStepController(playerSide, _gameMechanicsService, _sceneController);
+                    return new BotStepController(playerSide, _gameMechanicsService, _sceneView);
                 default:
                     return new UserStepController();
             }
