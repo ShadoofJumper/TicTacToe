@@ -54,10 +54,17 @@ namespace Controllers.SceneView
             PaintMark(playerSide, cellIndex);
         }
 
+        public void RemoveMark(int cellIndex)
+        {
+            if(_fieldMarks[cellIndex] != null)
+                Destroy(_fieldMarks[cellIndex]);
+        }
+
         private void PaintMark(PlayerSide playerSide, int cellIndex)
         {
             GameObject mark = Instantiate(_markPrefab, GetCellPosition(cellIndex), Quaternion.identity, _marksParent);
             mark.GetComponent<SpriteRenderer>().sprite = GetPlayerSprite(playerSide);
+            _fieldMarks[cellIndex] = mark;
         }
 
         private Sprite GetPlayerSprite(PlayerSide playerSide)
