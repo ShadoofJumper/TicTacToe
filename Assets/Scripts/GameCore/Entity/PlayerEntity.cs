@@ -13,17 +13,19 @@ namespace GameCore.Entity
     {
         private IEntityStepController _stepController;
 
-        
+        private string _playerName;
         private PlayerSide _playerSide;
         private int _playerCellValue;
         
         private Stack<Step> _steps = new Stack<Step>();
 
+        public string PlayerName => _playerName;
         public PlayerSide PlayerSide => _playerSide;
         public event Action<int> OnCompleteStepAction;
         
-        public PlayerEntity(PlayerSide playerSide, IEntityStepController stepController)
+        public PlayerEntity(string playerName, PlayerSide playerSide, IEntityStepController stepController)
         {
+            _playerName = playerName;
             _playerSide = playerSide;
             _stepController = stepController;
             _stepController.OnCompleteStep += OnCompleteStep;

@@ -9,6 +9,9 @@ namespace GameCore.Entity.PlayerFactory
         private IGameMechanicsService _gameMechanicsService;
         private ISceneView _sceneView;
 
+        private const string UserDefaultName = "Player";
+        private const string ComputerDefaultName = "Computer";
+        
         public PlayerFactory(IGameMechanicsService gameMechanicsService, ISceneView sceneView)
         {
             _gameMechanicsService = gameMechanicsService;
@@ -18,12 +21,19 @@ namespace GameCore.Entity.PlayerFactory
         public PlayerEntity Create(PlayerSide playerSide, PlayerControllerType controllerType)
         {
             IEntityStepController entityStepController = BuildPlayerController(playerSide, controllerType);
-            return new PlayerEntity(playerSide, entityStepController);
+            string playerName = GetPlayerName(playerSide, controllerType);
+            return new PlayerEntity(playerName, playerSide, entityStepController);
+        }
+
+        private string GetPlayerName(PlayerSide playerSide, PlayerControllerType controllerType)
+        {
+            string playerName = controllerType == PlayerControllerType.User ? UserDefaultName : ComputerDefaultName;
+            playerName += playerSide == PlayerSide.Player1 ? " 1" : " 2";
+            return playerName;
         }
 
         private IEntityStepController BuildPlayerController(PlayerSide playerSide, PlayerControllerType controllerType)
         {
-            //TODO: here create controller instan with DI inject
             switch (controllerType)
             {
                 case PlayerControllerType.Bot:

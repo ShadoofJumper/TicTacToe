@@ -1,19 +1,21 @@
 ﻿using System;
-using Controllers.SceneView;
+using GameCore.Services.SceneControllerService;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using Zenject;
 
 namespace GameCore.Services.InputService
 {
+    /// <summary>
+    /// Create callback for cell click on scene
+    /// </summary>
     public class InputService : IInputService, ITickable
     {
-        private ISceneView _sceneView;
+        private ISceneControllerService _sceneControllerService;
         public event Action<int> OnClickCell;
 
-        public InputService(ISceneView sceneView)
+        public InputService(ISceneControllerService sceneControllerService)
         {
-            _sceneView = sceneView;
+            _sceneControllerService = sceneControllerService;
         }
         
         public void Tick()
@@ -21,7 +23,7 @@ namespace GameCore.Services.InputService
             Vector3 mousePos = Input.mousePosition;
             if (Input.GetMouseButtonDown(0))
             {
-                if (_sceneView.IsCellIndexOnPosition(mousePos, out int result))
+                if (_sceneControllerService.IsCellIndexOnPosition(mousePos, out int result))
                 {
                     OnClickCell?.Invoke(result);
                 }

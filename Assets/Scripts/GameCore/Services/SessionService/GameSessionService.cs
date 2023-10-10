@@ -1,26 +1,28 @@
+using System;
 using System.Collections.Generic;
 using Controllers.GameSetupManager;
 using GameCore.Entity;
 using GameCore.Entity.PlayerFactory;
+using GameCore.Services.GameMechanicsService;
+using Plugins.Core.UI;
+using UI.Popups;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace GameCore.Services.SessionService
 {
-    public struct PlayersControllerPair
-    {
-        public PlayerControllerType PlayerOne;
-        public PlayerControllerType PlayerTwo;
-
-        public PlayersControllerPair(PlayerControllerType playerOne, PlayerControllerType playerTwo)
-        {
-            PlayerOne = playerOne;
-            PlayerTwo = playerTwo;
-        }
-    }
+    /// <summary>
+    /// Service get data for game session (type of mode atc.)
+    /// Create session players
+    /// manager game complete
+    /// </summary>
     public class GameSessionService : IInitializable
     {
         private GameSetupManager _gameSetupManager;
         private IPlayerFactory _playerFactory;
+        private IGameMechanicsService _gameMechanicsService;
+        private IUIManager _uiManager;
 
         private SessionSettings _sessionSettings;
         private PlayerEntity _playerOne;
@@ -28,19 +30,23 @@ namespace GameCore.Services.SessionService
         
         public PlayerEntity PlayerOne => _playerOne;
         public PlayerEntity PlayerTwo => _playerTwo;
-
-        private Dictionary<SessionBattleType, PlayersControllerPair> _controllerPairs
-            = new Dictionary<SessionBattleType, PlayersControllerPair>() {
-                [SessionBattleType.PlayerVsPlayer] = 
-                    new PlayersControllerPair(PlayerControllerType.User, PlayerControllerType.User),
-                [SessionBattleType.PlayerVsBot] = 
-                        new PlayersControllerPair(PlayerControllerType.User, PlayerControllerType.Bot),
-                [SessionBattleType.BotVsBot] = 
-                    new PlayersControllerPair(PlayerControllerType.User, PlayerControllerType.Bot)
+        
+        
+        private readonly Dictionary<SessionBattleType, (PlayerControllerType playerOneType, PlayerControllerType playerTwoType)> gameModesContollers
+            = new Dictionary<SessionBattleType, (PlayerControllerType playerOneType, PlayerControllerType playerTwoType)>
+            {
+                [SessionBattleType.PlayerVsPlayer] = (PlayerControllerType.User, PlayerControllerType.User),
+                [SessionBattleType.PlayerVsBot] = (PlayerControllerType.User, PlayerControllerType.Bot),
+                [SessionBattleType.BotVsBot] = (PlayerControllerType.Bot, PlayerControllerType.Bot),
             };
 
-        public GameSessionService(GameSetupManager gameSetupManager, IPlayerFactory playerFactory)
+        public GameSessionService(GameSetupManager gameSetupManager, 
+            IPlayerFactory playerFactory, 
+            IGameMechanicsService gameMechanicsService,
+            IUIManager uiManager)
         {
+            _uiManager = uiManager;
+            _gameMechanicsService = gameMechanicsService;
             _gameSetupManager = gameSetupManager;
             _playerFactory = playerFactory;
         }
@@ -48,14 +54,44 @@ namespace GameCore.Services.SessionService
         public void Initialize()
         {
             _sessionSettings = _gameSetupManager.SessionSettings;
+            _gameMechanicsService.OnCompleteGame += ShowCompleteGame;
             CreatePlayers();
+        }
+
+        private void ShowCompleteGame(GameResult gameResult)
+        {
+            _uiManager.Get<EndGamePopup>().Show(new EndGamePopupArgs(GetEndGameTitle(gameResult), 0)).SubscribeOnClose(
+                _ => RestartLevel());
+        }
+
+        private void RestartLevel()
+        {
+            SceneManager.LoadScene(Application.loadedLevel);
         }
 
         private void CreatePlayers()
         {
-            var controllerPair = _controllerPairs[_sessionSettings.BattleType];
-            _playerOne = _playerFactory.Create(PlayerSide.Player1, controllerPair.PlayerOne);
-            _playerTwo = _playerFactory.Create(PlayerSide.Player2, controllerPair.PlayerTwo);
+            var gameModeControllers = gameModesContollers[_sessionSettings.BattleType];
+            _playerOne = _playerFactory.Create(PlayerSide.Player1, gameModeControllers.playerOneType);
+            _playerTwo = _playerFactory.Create(PlayerSide.Player2, gameModeControllers.playerTwoType);
+        }
+
+        private string GetEndGameTitle(GameResult gameResult)
+        {
+            if (gameResult == GameResult.WinPlayerOne)
+            {
+                return _playerOne.PlayerName + "win!";
+            }
+            else if (gameResult == GameResult.WinPlayerTwo)
+            {
+                return _playerTwo.PlayerName + "win!";
+            }
+            else if (gameResult == GameResult.Draw)
+            {
+                return "Draw!";
+            }
+
+            return "";
         }
     }
 }

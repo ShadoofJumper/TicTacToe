@@ -1,9 +1,13 @@
-﻿namespace GameCore
+﻿using System;
+using GameCore.Services.GameMechanicsService;
+
+namespace GameCore
 {
     public interface IGameMechanicsService
     {
-        int FreeCellValue { get; }
-        int[] Field { get; }
+        event Action<int, PlayerSide> OnPlaceMark;
+        event Action<GameResult> OnCompleteGame;
+        int[] GetFreeCells();
         int GetBestMoveForCurrentPlayer();
         bool IsCellFree(int cellIndex);
     }

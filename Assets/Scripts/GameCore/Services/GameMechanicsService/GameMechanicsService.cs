@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using GameCore.Entity;
 using GameCore.Services.SessionService;
 using UnityEngine;
@@ -14,6 +16,11 @@ namespace GameCore.Services.GameMechanicsService
         WinPlayerTwo,
         Draw
     }
+    /// <summary>
+    /// Service manage man game mechanics
+    /// give access to game field state
+    /// check game end
+    /// </summary>
     public class GameMechanicsService : IGameMechanicsService, IInitializable
     {
         private GameSessionService _gameSessionService;
@@ -26,15 +33,12 @@ namespace GameCore.Services.GameMechanicsService
         private const int _freeCellValue = 0;
         private const int _player1CellValue = 1;
         private const int _player2CellValue = 2;
-
-        //TODO: maybe remove this and add method for get free cells
-        public int FreeCellValue => _freeCellValue;
-
+        
         private int[] _currentField;
-
         private PlayerEntity _currentStepPlayer;
 
-        public int[] Field => _currentField;
+        public event Action<int, PlayerSide> OnPlaceMark;
+        public event Action<GameResult> OnCompleteGame;
 
         public GameMechanicsService(GameSessionService gameSessionService)
         {
@@ -81,6 +85,7 @@ namespace GameCore.Services.GameMechanicsService
         private void PutValueOnField(int cellIndex, PlayerSide playerSide)
         {
             _currentField[cellIndex] =  GetPlayerCellValue(playerSide);
+            OnPlaceMark?.Invoke(cellIndex, playerSide);
         }
 
         
@@ -88,9 +93,8 @@ namespace GameCore.Services.GameMechanicsService
 
         private void CompleteGame(GameResult gameResult)
         {
-            //here logic for cell ui manager and show complete popup
+            OnCompleteGame?.Invoke(gameResult);
         }
-        
         private bool IsGameComplete(out GameResult gameResult)
         {
             if (!IsBoardFull())
@@ -150,12 +154,17 @@ namespace GameCore.Services.GameMechanicsService
         }
 
         #endregion
-
-
+        
         #region Helper methods
+
+        public int[] GetFreeCells()
+        {
+            return _currentField
+                .Where(x => x == _freeCellValue).ToArray();
+        }
         public bool IsCellFree(int cellIndex)
         {
-            return _currentField[cellIndex] == FreeCellValue;
+            return _currentField[cellIndex] == _freeCellValue;
         }
         public int GetBestMoveForCurrentPlayer()
         {

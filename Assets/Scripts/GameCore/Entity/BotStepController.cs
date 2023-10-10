@@ -22,17 +22,13 @@ namespace GameCore.Entity
         
         public void StarStep()
         {
-            //here logic for check game field
             int cellIndex = GetFreeCellIndex();
-            _sceneView.PlaceMark(_playerSide, cellIndex);
             OnCompleteStep?.Invoke(cellIndex);
         }
 
         private int GetFreeCellIndex()
         {
-            var freeCells = _gameMechanicsService.Field
-                .Where(x => x == _gameMechanicsService.FreeCellValue)
-                .ToArray();
+            var freeCells = _gameMechanicsService.GetFreeCells();
             return freeCells[Random.Range(0, freeCells.Count())];
         }
     }
