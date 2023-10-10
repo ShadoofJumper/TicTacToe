@@ -9,18 +9,19 @@ namespace GameCore.Services.HitnService
     {
         private SceneView _sceneView;
         private HUDView _hudView;
-        
-        public HintService(SceneView sceneView, HUDView hudView)
+        private IGameMechanicsService _gameMechanicsService;
+
+        public HintService(SceneView sceneView, HUDView hudView, IGameMechanicsService gameMechanicsService)
         {
             _sceneView = sceneView;
             _hudView = hudView;
+            _gameMechanicsService = gameMechanicsService;
         }
 
 
         private void ShowHint()
         {
-            //!!!!!!!!!!!here code for acces ai logic for getn hint index
-            int cellIndex = 0;
+            int cellIndex = _gameMechanicsService.GetBestMoveForCurrentPlayer();
             _sceneView.ShowHintCell(cellIndex);
         }
 
