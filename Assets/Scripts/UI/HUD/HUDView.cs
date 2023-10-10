@@ -38,6 +38,18 @@ namespace UI.HUD
             _undoButton.interactable = value;
             _hintButton.interactable = value;
         }
+
+        public void ShowToolButtons()
+        {
+            _undoButton.gameObject.SetActive(true);
+            _hintButton.gameObject.SetActive(true);
+        }
+
+        public void HideToolsButtons()
+        {
+            _undoButton.gameObject.SetActive(false);
+            _hintButton.gameObject.SetActive(false);
+        }
         
         private void OnHintClick()
         {

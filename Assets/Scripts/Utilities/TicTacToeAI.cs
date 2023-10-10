@@ -4,15 +4,15 @@ namespace Utilities
 {
     public static class TicTacToeAI
     {
-        private static int _currentPlayerValue;
-        private static int _currentOpponentValue;
-        private static int _currentFreeValue;
+        private static int _playerCellValue;
+        private static int _opponentCellValue;
+        private static int _freeCellValue;
 
         public static int GetBestMove(int[] board, int playerValue, int opponentValue, int freeValue)
         {
-            _currentPlayerValue = playerValue;
-            _currentOpponentValue = opponentValue;
-            _currentFreeValue = freeValue;
+            _playerCellValue = playerValue;
+            _opponentCellValue = opponentValue;
+            _freeCellValue = freeValue;
             
             int bestMove = -1;
             int bestScore = int.MinValue;
@@ -24,7 +24,7 @@ namespace Utilities
                 if (IsMoveValid(board, move))
                 {
                     int[] newBoard = CloneBoard(board);
-                    MakeMove(newBoard, move, _currentPlayerValue);
+                    MakeMove(newBoard, move, _playerCellValue);
                     int score = Minimax(newBoard, 0, false);
                 
                     if (score > bestScore)
@@ -55,7 +55,7 @@ namespace Utilities
                 if (IsMoveValid(board, move))
                 {
                     int[] newBoard = CloneBoard(board);
-                    int currentPlayer = isMaximizing ? _currentPlayerValue : _currentOpponentValue;
+                    int currentPlayer = isMaximizing ? _playerCellValue : _opponentCellValue;
                     MakeMove(newBoard, move, currentPlayer);
                     
                     int score = Minimax(newBoard, depth + 1, !isMaximizing);
@@ -76,7 +76,7 @@ namespace Utilities
 
         private static bool IsMoveValid(int[] board, int move)
         {
-            return (board[move] == _currentFreeValue);
+            return (board[move] == _freeCellValue);
         }
 
         private static int[] CloneBoard(int[] board)
@@ -94,14 +94,14 @@ namespace Utilities
         private static bool IsGameOver(int[] board)
         {
             //game over when board full or win one side of the sides
-            return IsBoardFull(board) || CheckWin(board, _currentPlayerValue) || CheckWin(board, _currentOpponentValue);
+            return IsBoardFull(board) || CheckWin(board, _playerCellValue) || CheckWin(board, _opponentCellValue);
         }
         
         private static bool IsBoardFull(int[] board)
         {
             for (int i = 0; i < 9; i++)
             {
-                if (board[i] == ' ')
+                if (board[i] == _freeCellValue)
                 {
                     return false;
                 }
@@ -133,11 +133,11 @@ namespace Utilities
 
         private static int Evaluate(int[] board)
         {
-            if (CheckWin(board, _currentPlayerValue))
+            if (CheckWin(board, _playerCellValue))
             {
                 return 10;
             }
-            else if (CheckWin(board, _currentOpponentValue))
+            else if (CheckWin(board, _opponentCellValue))
             {
                 return -10;
             }

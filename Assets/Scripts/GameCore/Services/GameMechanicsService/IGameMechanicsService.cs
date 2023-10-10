@@ -4,7 +4,7 @@
     {
         int FreeCellValue { get; }
         int[] Field { get; }
-        bool SetMark(PlayerSide playerSide, int cell, int row);
         int GetBestMoveForCurrentPlayer();
+        bool IsCellFree(int cellIndex);
     }
 }

@@ -29,7 +29,7 @@ namespace GameCore.Entity.PlayerFactory
                 case PlayerControllerType.Bot:
                     return new BotStepController(playerSide, _gameMechanicsService, _sceneView);
                 default:
-                    return new UserStepController(_inputService);
+                    return new UserStepController(_inputService, _gameMechanicsService);
             }
         }
     }
