@@ -23,6 +23,12 @@ namespace UI.HUD
             _undoButton.onClick.AddListener(OnUndoClick);
         }
 
+        private void Start()
+        {
+            SetHintButtonActive(false);
+            SetUndoButtonActive(false);
+        }
+
         public void SetPlayerOneName(string playerName)
         {
             _playerOneNameText.text = playerName;
@@ -33,22 +39,14 @@ namespace UI.HUD
             _playerTwoNameText.text = playerName;
         }
         
-        public void SetDisableButtons(bool value)
+        public void SetHintButtonActive(bool value)
         {
-            _undoButton.interactable = value;
-            _hintButton.interactable = value;
+            _hintButton.gameObject.SetActive(value);
         }
 
-        public void ShowToolButtons()
+        public void SetUndoButtonActive(bool value)
         {
-            _undoButton.gameObject.SetActive(true);
-            _hintButton.gameObject.SetActive(true);
-        }
-
-        public void HideToolsButtons()
-        {
-            _undoButton.gameObject.SetActive(false);
-            _hintButton.gameObject.SetActive(false);
+            _undoButton.gameObject.SetActive(value);
         }
         
         private void OnHintClick()

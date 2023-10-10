@@ -3,12 +3,6 @@ using System.Collections.Generic;
 
 namespace GameCore.Entity
 {
-    //TODO: maybe remove struct if it will store just one variable
-    public struct Step
-    {
-        public int CellIndex;
-    }
-    
     public class PlayerEntity
     {
         private IEntityStepController _stepController;
@@ -17,7 +11,7 @@ namespace GameCore.Entity
         private PlayerSide _playerSide;
         private int _playerCellValue;
         
-        private Stack<Step> _steps = new Stack<Step>();
+        private Stack<int> _steps = new Stack<int>();
 
         public string PlayerName => _playerName;
         public PlayerSide PlayerSide => _playerSide;
@@ -39,12 +33,12 @@ namespace GameCore.Entity
         private void OnCompleteStep(int cellIndex)
         {
             OnCompleteStepAction?.Invoke(cellIndex);
-            _steps.Push(new Step(){CellIndex = cellIndex});
+            _steps.Push(cellIndex);
         }
         
-        public void UnDoStep()
+        public int UndoStep()
         {
-            _steps.Pop();
+            return _steps.Pop();
         }
         
     }

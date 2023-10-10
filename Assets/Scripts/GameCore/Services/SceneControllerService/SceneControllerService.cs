@@ -1,4 +1,6 @@
-﻿using Controllers.SceneView;
+﻿using System;
+using Controllers.SceneView;
+using GameCore.Services.GameMechanicsService;
 using UnityEngine;
 using Zenject;
 using Vector3 = UnityEngine.Vector3;
@@ -10,7 +12,7 @@ namespace GameCore.Services.SceneControllerService
     /// get field collider hit info
     /// subscribe in game mechanics field change
     /// </summary>
-    public class SceneControllerService : ISceneControllerService, IInitializable
+    public class SceneControllerService : ISceneControllerService, IInitializable, IDisposable
     {
         private ISceneView _sceneView;
         private IGameMechanicsService _gameMechanicsService;
@@ -24,6 +26,7 @@ namespace GameCore.Services.SceneControllerService
         public void Initialize()
         {
             _gameMechanicsService.OnPlaceMark += PutMarkInCell;
+            _gameMechanicsService.OnRemoveMark += RemoveMarkOnCell;
         }
 
         public bool IsCellIndexOnPosition(Vector3 pos, out int result)
@@ -39,12 +42,27 @@ namespace GameCore.Services.SceneControllerService
             result = 0;
             return false;
         }
-        
 
+        public void ShowHintCell(int cellIndex)
+        {
+            _sceneView.ShowHintCell(cellIndex);
+        }
+        
         private void PutMarkInCell(int cellIndex, PlayerSide playerSide)
         {
             Debug.Log("SceneControllerService. PutMarkInCell: "+cellIndex);
             _sceneView.PlaceMark(playerSide, cellIndex);
+        }
+
+        private void RemoveMarkOnCell(int cellIndex)
+        {
+            _sceneView.RemoveMark(cellIndex);
+        }
+
+        public void Dispose()
+        {
+            _gameMechanicsService.OnPlaceMark -= PutMarkInCell;
+            _gameMechanicsService.OnRemoveMark -= RemoveMarkOnCell;
         }
     }
 }

@@ -5,6 +5,7 @@ using GameCore.Services.HitnService;
 using GameCore.Services.InputService;
 using GameCore.Services.SceneControllerService;
 using GameCore.Services.SessionService;
+using GameCore.Services.UndoService;
 using UI.HUD;
 using UnityEngine;
 using Zenject;
@@ -28,6 +29,8 @@ namespace GameCore.Installers
             Container.BindInterfacesAndSelfTo<GameMechanicsService>().AsSingle().NonLazy();;
             Container.BindInterfacesAndSelfTo<InputService>().AsSingle();
             Container.BindInterfacesAndSelfTo<HintService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<UndoService>().AsSingle();
+
             Container.BindInterfacesAndSelfTo<SceneControllerService>().AsSingle();
 
             Container.BindInterfacesTo<PlayerFactory>().AsSingle();

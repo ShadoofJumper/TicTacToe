@@ -1,4 +1,5 @@
 using System;
+using GameCore.Services.GameMechanicsService;
 using GameCore.Services.InputService;
 
 namespace GameCore.Entity

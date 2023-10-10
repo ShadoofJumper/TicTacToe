@@ -5,6 +5,7 @@ using GameCore.Entity;
 using GameCore.Entity.PlayerFactory;
 using GameCore.Services.GameMechanicsService;
 using Plugins.Core.UI;
+using UI.HUD;
 using UI.Popups;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -23,6 +24,7 @@ namespace GameCore.Services.SessionService
         private IPlayerFactory _playerFactory;
         private IGameMechanicsService _gameMechanicsService;
         private IUIManager _uiManager;
+        private HUDView _hudView;
 
         private SessionSettings _sessionSettings;
         private PlayerEntity _playerOne;
@@ -30,7 +32,8 @@ namespace GameCore.Services.SessionService
         
         public PlayerEntity PlayerOne => _playerOne;
         public PlayerEntity PlayerTwo => _playerTwo;
-        
+
+        public SessionBattleType BattleType => _sessionSettings.BattleType;
         
         private readonly Dictionary<SessionBattleType, (PlayerControllerType playerOneType, PlayerControllerType playerTwoType)> gameModesContollers
             = new Dictionary<SessionBattleType, (PlayerControllerType playerOneType, PlayerControllerType playerTwoType)>
@@ -43,8 +46,10 @@ namespace GameCore.Services.SessionService
         public GameSessionService(GameSetupManager gameSetupManager, 
             IPlayerFactory playerFactory, 
             IGameMechanicsService gameMechanicsService,
-            IUIManager uiManager)
+            IUIManager uiManager,
+            HUDView hudView)
         {
+            _hudView = hudView;
             _uiManager = uiManager;
             _gameMechanicsService = gameMechanicsService;
             _gameSetupManager = gameSetupManager;
@@ -74,6 +79,8 @@ namespace GameCore.Services.SessionService
             var gameModeControllers = gameModesContollers[_sessionSettings.BattleType];
             _playerOne = _playerFactory.Create(PlayerSide.Player1, gameModeControllers.playerOneType);
             _playerTwo = _playerFactory.Create(PlayerSide.Player2, gameModeControllers.playerTwoType);
+            _hudView.SetPlayerOneName(_playerOne.PlayerName);
+            _hudView.SetPlayerTwoName(_playerTwo.PlayerName);
         }
 
         private string GetEndGameTitle(GameResult gameResult)

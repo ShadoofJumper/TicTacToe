@@ -29,7 +29,7 @@ namespace Controllers.SceneView
             Instantiate(_hintPrefab, hintPos, Quaternion.identity);
         }
 
-        public void SetPlayerMark(PlayerSide playerSprite, Sprite markSprite)
+        public void SetPlayerMarkSpite(PlayerSide playerSprite, Sprite markSprite)
         {
             switch (playerSprite)
             {
@@ -42,7 +42,7 @@ namespace Controllers.SceneView
             }
         }
         
-        public void SetPlayground(Sprite playerSprite)
+        public void SetPlaygroundSprite(Sprite playerSprite)
         {
             _backgroundSpriteRenderer.sprite = playerSprite;
         }
@@ -64,8 +64,6 @@ namespace Controllers.SceneView
         {
             return playerSide == PlayerSide.Player1 ? _player1Mark : _player2Mark;
         }
-        
-        //private int GetCellIndex(int row, int cell) => cell + row * 3;
         
         private Vector3 GetCellPosition(int cellIndex)
         {

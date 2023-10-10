@@ -37,6 +37,7 @@ namespace GameCore.Services.GameMechanicsService
         private int[] _currentField;
         private PlayerEntity _currentStepPlayer;
 
+        public event Action<int> OnRemoveMark;
         public event Action<int, PlayerSide> OnPlaceMark;
         public event Action<GameResult> OnCompleteGame;
 
@@ -53,6 +54,18 @@ namespace GameCore.Services.GameMechanicsService
             StartGame();
         }
 
+        public void UndoLastStep()
+        {
+            List<int> cellsUndo = new List<int>();
+            cellsUndo.Add(_player2.UndoStep());
+            cellsUndo.Add(_player1.UndoStep());
+            cellsUndo.ForEach(cellIndex =>
+            {
+                _currentField[cellIndex] = _freeCellValue;
+                OnRemoveMark?.Invoke(cellIndex);
+            });
+        }
+        
         private void StartGame()
         {
             Debug.Log("[Game mechanics] start game!");
@@ -156,7 +169,7 @@ namespace GameCore.Services.GameMechanicsService
         #endregion
         
         #region Helper methods
-
+        
         public int[] GetFreeCells()
         {
             return _currentField
