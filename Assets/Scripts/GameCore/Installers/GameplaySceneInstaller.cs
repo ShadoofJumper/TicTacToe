@@ -1,4 +1,5 @@
 using Controllers.SceneView;
+using GameCore.Entity.PlayerFactory;
 using GameCore.Services.GameMechanicsService;
 using GameCore.Services.HitnService;
 using GameCore.Services.InputService;
@@ -26,6 +27,7 @@ namespace GameCore.Installers
             Container.BindInterfacesAndSelfTo<GameMechanicsService>().AsSingle();
             Container.BindInterfacesAndSelfTo<InputService>().AsSingle();
             Container.BindInterfacesAndSelfTo<HintService>().AsSingle();
+            Container.BindInterfacesTo<PlayerFactory>().AsSingle();
         }
     }
 }

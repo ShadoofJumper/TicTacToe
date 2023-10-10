@@ -2,7 +2,7 @@
 {
     public interface IGameMechanicsService
     {
-        int FreeCell { get; }
+        int FreeCellValue { get; }
         int[] Field { get; }
         bool SetMark(PlayerSide playerSide, int cell, int row);
         int GetBestMoveForCurrentPlayer();

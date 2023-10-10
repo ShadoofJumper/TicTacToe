@@ -1,3 +1,6 @@
+using Plugins.Core.UI;
+using UI.Screens;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -10,18 +13,25 @@ namespace Controllers.GameSetupManager
     
     public class GameSetupManager : IInitializable
     {
+        private IUIManager _uiManager;
+        
         private const string BattleSceneName = "GamePlayScene";
         
         private SessionSettings _currentSessionSettings;
         
         public SessionSettings SessionSettings => _currentSessionSettings;
+
+        public GameSetupManager(IUIManager uiManager)
+        {
+            _uiManager = uiManager;
+        }
         
         public void Initialize()
         {
-            _currentSessionSettings = new SessionSettings()
-            {
+            _currentSessionSettings = new SessionSettings() {
                 BattleType = SessionBattleType.PlayerVsPlayer
             };
+            _uiManager.Get<MainMenuScreen>().Show(null);
         }
         
         public void SetBattleType(SessionBattleType battleType)

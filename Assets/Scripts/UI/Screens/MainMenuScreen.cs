@@ -11,6 +11,7 @@ namespace UI.Screens
         [SerializeField] private Button _playerVsPlayer;
         [SerializeField] private Button _playerVsComputer;
         [SerializeField] private Button _computerVsComputer;
+        [SerializeField] private Button _exitGame;
 
         private GameSetupManager _gameSetupManager;
         
@@ -31,7 +32,7 @@ namespace UI.Screens
             _playerVsPlayer.onClick.AddListener(OnClickPlayerVsPlayer);
             _playerVsComputer.onClick.AddListener(OnClickPlayerVsComputer);
             _computerVsComputer.onClick.AddListener(OnClickComputerVsComputer);
-
+            _exitGame.onClick.AddListener(OnExitGame);
         }
 
         protected override void OnHide()
@@ -40,6 +41,7 @@ namespace UI.Screens
             _playerVsPlayer.onClick.RemoveListener(OnClickPlayerVsPlayer);
             _playerVsComputer.onClick.RemoveListener(OnClickPlayerVsComputer);
             _computerVsComputer.onClick.RemoveListener(OnClickComputerVsComputer);
+            _exitGame.onClick.RemoveListener(OnExitGame);
         }
 
         private void OnClickPlayerVsPlayer()
@@ -55,7 +57,11 @@ namespace UI.Screens
             SelectMode(SessionBattleType.PlayerVsPlayer);
         }
 
-
+        private void OnExitGame()
+        {
+            Application.Quit();
+        }
+        
         private void SelectMode(SessionBattleType battleType)
         {
             _gameSetupManager.SetBattleType(battleType);

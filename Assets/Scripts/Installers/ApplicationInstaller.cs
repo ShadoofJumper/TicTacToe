@@ -9,7 +9,7 @@ namespace Installers
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<GameSetupManager>().AsSingle();
+            Container.BindInterfacesAndSelfTo<GameSetupManager>().AsSingle().NonLazy();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using ModestTree;
+using UnityEngine;
 
 namespace Controllers.SceneView
 {
@@ -52,6 +53,19 @@ namespace Controllers.SceneView
             PaintMark(playerSide, cellIndex);
         }
 
+        public bool IsCellIndexOnPosition(Vector3 pos, out int result)
+        {
+            RaycastHit2D hits = Physics2D.Raycast(pos, Vector2.zero);
+            if (hits.collider != null)
+            {
+                result = _fieldCells.IndexOf(hits.collider);
+                Debug.Log("SceneView. Try get cell: "+result);
+                return true;
+            }
+
+            result = 0;
+            return false;
+        }
         
         private void PaintMark(PlayerSide playerSide, int cellIndex)
         {

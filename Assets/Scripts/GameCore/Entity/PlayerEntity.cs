@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace GameCore.Entity
 {
@@ -10,13 +11,20 @@ namespace GameCore.Entity
     
     public class PlayerEntity
     {
-        private PlayerSide _playerSide;
         private IEntityStepController _stepController;
 
+        
+        private PlayerSide _playerSide;
+        private int _playerCellValue;
+        
         private Stack<Step> _steps = new Stack<Step>();
 
-        public PlayerEntity(IEntityStepController stepController)
+        public PlayerSide PlayerSide => _playerSide;
+        public event Action<int> OnCompleteStepAction;
+        
+        public PlayerEntity(PlayerSide playerSide, IEntityStepController stepController)
         {
+            _playerSide = playerSide;
             _stepController = stepController;
             _stepController.OnCompleteStep += OnCompleteStep;
         }
@@ -28,6 +36,7 @@ namespace GameCore.Entity
 
         private void OnCompleteStep(int cellIndex)
         {
+            OnCompleteStepAction?.Invoke(cellIndex);
             _steps.Push(new Step(){CellIndex = cellIndex});
         }
         

@@ -1,9 +1,11 @@
 using Controllers.SceneView;
+using GameCore.Services.InputService;
 
 namespace GameCore.Entity.PlayerFactory
 {
     public class PlayerFactory : IPlayerFactory
     {
+        private IInputService _inputService;
         private IGameMechanicsService _gameMechanicsService;
         private ISceneView _sceneView;
 
@@ -16,7 +18,7 @@ namespace GameCore.Entity.PlayerFactory
         public PlayerEntity Create(PlayerSide playerSide, PlayerControllerType controllerType)
         {
             IEntityStepController entityStepController = BuildPlayerController(playerSide, controllerType);
-            return new PlayerEntity(entityStepController);
+            return new PlayerEntity(playerSide, entityStepController);
         }
 
         private IEntityStepController BuildPlayerController(PlayerSide playerSide, PlayerControllerType controllerType)
@@ -27,7 +29,7 @@ namespace GameCore.Entity.PlayerFactory
                 case PlayerControllerType.Bot:
                     return new BotStepController(playerSide, _gameMechanicsService, _sceneView);
                 default:
-                    return new UserStepController();
+                    return new UserStepController(_inputService);
             }
         }
     }

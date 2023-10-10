@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Controllers.GameSetupManager;
 using GameCore.Entity;
 using GameCore.Entity.PlayerFactory;
@@ -5,6 +6,17 @@ using Zenject;
 
 namespace GameCore.Services.SessionService
 {
+    public struct PlayersControllerPair
+    {
+        public PlayerControllerType PlayerOne;
+        public PlayerControllerType PlayerTwo;
+
+        public PlayersControllerPair(PlayerControllerType playerOne, PlayerControllerType playerTwo)
+        {
+            PlayerOne = playerOne;
+            PlayerTwo = playerTwo;
+        }
+    }
     public class GameSessionService : IInitializable
     {
         private GameSetupManager _gameSetupManager;
@@ -16,6 +28,16 @@ namespace GameCore.Services.SessionService
         
         public PlayerEntity PlayerOne => _playerOne;
         public PlayerEntity PlayerTwo => _playerTwo;
+
+        private Dictionary<SessionBattleType, PlayersControllerPair> _controllerPairs
+            = new Dictionary<SessionBattleType, PlayersControllerPair>() {
+                [SessionBattleType.PlayerVsPlayer] = 
+                    new PlayersControllerPair(PlayerControllerType.User, PlayerControllerType.User),
+                [SessionBattleType.PlayerVsBot] = 
+                        new PlayersControllerPair(PlayerControllerType.User, PlayerControllerType.Bot),
+                [SessionBattleType.BotVsBot] = 
+                    new PlayersControllerPair(PlayerControllerType.User, PlayerControllerType.Bot)
+            };
 
         public GameSessionService(GameSetupManager gameSetupManager, IPlayerFactory playerFactory)
         {
@@ -29,24 +51,11 @@ namespace GameCore.Services.SessionService
             CreatePlayers();
         }
 
-        //TODO: move this part to individual factory? or create array for store info about player params for mode
         private void CreatePlayers()
         {
-            switch (_sessionSettings.BattleType)
-            {
-                case SessionBattleType.PlayerVsPlayer:
-                    _playerOne = _playerFactory.Create(PlayerSide.Player1, PlayerControllerType.User);
-                    _playerTwo = _playerFactory.Create(PlayerSide.Player2, PlayerControllerType.User);
-                    break;
-                case SessionBattleType.PlayerVsBot:
-                    _playerOne = _playerFactory.Create(PlayerSide.Player1, PlayerControllerType.User);
-                    _playerTwo = _playerFactory.Create(PlayerSide.Player2, PlayerControllerType.Bot);
-                    break;
-                case SessionBattleType.BotVsBot:
-                    _playerOne = _playerFactory.Create(PlayerSide.Player1, PlayerControllerType.Bot);
-                    _playerTwo = _playerFactory.Create(PlayerSide.Player2, PlayerControllerType.Bot);
-                    break;
-            }
+            var controllerPair = _controllerPairs[_sessionSettings.BattleType];
+            _playerOne = _playerFactory.Create(PlayerSide.Player1, controllerPair.PlayerOne);
+            _playerTwo = _playerFactory.Create(PlayerSide.Player2, controllerPair.PlayerTwo);
         }
     }
 }

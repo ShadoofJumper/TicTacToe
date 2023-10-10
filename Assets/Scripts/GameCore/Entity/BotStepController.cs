@@ -31,7 +31,7 @@ namespace GameCore.Entity
         private int GetFreeCellIndex()
         {
             var freeCells = _gameMechanicsService.Field
-                .Where(x => x == _gameMechanicsService.FreeCell)
+                .Where(x => x == _gameMechanicsService.FreeCellValue)
                 .ToArray();
             return freeCells[Random.Range(0, freeCells.Count())];
         }
