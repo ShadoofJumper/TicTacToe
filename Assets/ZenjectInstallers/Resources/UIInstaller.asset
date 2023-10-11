@@ -15,3 +15,4 @@ MonoBehaviour:
   _ui: {fileID: 8629657491434490632, guid: ff956faa522f34e199e8c3d6577dd428, type: 3}
   elements:
   - {fileID: 2313885772898510302, guid: e71bdac57c954c94296f30c5bf592084, type: 3}
+  - {fileID: 2308698674777510484, guid: 7f83553653e20164c8cd0799fd397c38, type: 3}

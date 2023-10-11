@@ -33,5 +33,9 @@ namespace GameCore.Entity
             OnCompleteStep?.Invoke(chosenCellIndex);
             _inputService.OnClickCell -= CompleteStep;
         }
+
+        public void Dispose()
+        {
+        }
     }
 }

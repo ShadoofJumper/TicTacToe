@@ -497,7 +497,7 @@ GameObject:
   - component: {fileID: 2178722646974112957}
   - component: {fileID: 2178722646974112956}
   m_Layer: 0
-  m_Name: SceneController
+  m_Name: SceneView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -543,9 +543,13 @@ MonoBehaviour:
   - {fileID: 2178722646724884581}
   - {fileID: 2178722646164414877}
   - {fileID: 2178722647526810931}
+  _marksParent: {fileID: 2178722647044659640}
+  _player1Mark: {fileID: 21300000, guid: 5e8278e012ff04d9a8bbd92350645568, type: 3}
+  _player2Mark: {fileID: 21300000, guid: bd30ced15dd1c4a81a8798331e1abe4a, type: 3}
   _markPrefab: {fileID: 3880289127758556960, guid: 6ce9ad09b72862d4199ad8084f1ecc59,
     type: 3}
-  _marksParent: {fileID: 2178722647044659640}
+  _hintPrefab: {fileID: 5409197861841488418, guid: 7e29015dff89e5743a99e4ce436717ee,
+    type: 3}
 --- !u!1 &2178722647044659643
 GameObject:
   m_ObjectHideFlags: 0

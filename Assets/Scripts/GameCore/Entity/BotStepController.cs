@@ -1,36 +1,47 @@
 using System;
 using System.Linq;
-using Controllers.SceneView;
 using GameCore.Services.GameMechanicsService;
+using GameCore.Services.TimerService;
 using Random = UnityEngine.Random;
 
 namespace GameCore.Entity
 {
-    public class BotStepController : IEntityStepController
+    public class BotStepController : IEntityStepController, IDisposable
     {
         private IGameMechanicsService _gameMechanicsService;
-        private ISceneView _sceneView;
+        private ITimerService _timerService;
 
-        private PlayerSide _playerSide;
+        private float ComputerThingDelay = 1f;
+        private TimerHandle _timer;
+
         public event Action<int> OnCompleteStep;
 
-        public BotStepController(PlayerSide playerSide, IGameMechanicsService gameMechanicsService, ISceneView sceneView)
+        public BotStepController(IGameMechanicsService gameMechanicsService, ITimerService timerService)
         {
-            _playerSide = playerSide;
             _gameMechanicsService = gameMechanicsService;
-            _sceneView = sceneView;
+            _timerService = timerService;
         }
         
         public void StarStep()
         {
             int cellIndex = GetFreeCellIndex();
-            OnCompleteStep?.Invoke(cellIndex);
+            
+            _timer = _timerService.OnComplete(ComputerThingDelay, () =>
+            {
+                OnCompleteStep?.Invoke(cellIndex);
+            });
         }
+        
 
         private int GetFreeCellIndex()
         {
             var freeCells = _gameMechanicsService.GetFreeCells();
             return freeCells[Random.Range(0, freeCells.Count())];
+        }
+
+        public void Dispose()
+        {
+            _timer?.Break();
         }
     }
 }

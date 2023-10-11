@@ -4,6 +4,7 @@ using Controllers.GameSetupManager;
 using GameCore.Entity;
 using GameCore.Entity.PlayerFactory;
 using GameCore.Services.GameMechanicsService;
+using GameCore.Services.SessionTimerService;
 using Plugins.Core.UI;
 using UI.HUD;
 using UI.Popups;
@@ -18,20 +19,20 @@ namespace GameCore.Services.SessionService
     /// Create session players
     /// manager game complete
     /// </summary>
-    public class GameSessionService : IInitializable
+    public class GameSessionService : IInitializable, IDisposable
     {
         private GameSetupManager _gameSetupManager;
         private IPlayerFactory _playerFactory;
         private IGameMechanicsService _gameMechanicsService;
         private IUIManager _uiManager;
+        private ISessionTimerService _sessionTimerService;
         private HUDView _hudView;
 
         private SessionSettings _sessionSettings;
         private PlayerEntity _playerOne;
         private PlayerEntity _playerTwo;
-        
-        public PlayerEntity PlayerOne => _playerOne;
-        public PlayerEntity PlayerTwo => _playerTwo;
+
+        private const string MenuName = "MainMenuScene";
 
         public SessionBattleType BattleType => _sessionSettings.BattleType;
         
@@ -47,6 +48,7 @@ namespace GameCore.Services.SessionService
             IPlayerFactory playerFactory, 
             IGameMechanicsService gameMechanicsService,
             IUIManager uiManager,
+            ISessionTimerService sessionTimerService,
             HUDView hudView)
         {
             _hudView = hudView;
@@ -54,18 +56,29 @@ namespace GameCore.Services.SessionService
             _gameMechanicsService = gameMechanicsService;
             _gameSetupManager = gameSetupManager;
             _playerFactory = playerFactory;
+            _sessionTimerService = sessionTimerService;
         }
         
         public void Initialize()
         {
             _sessionSettings = _gameSetupManager.SessionSettings;
-            _gameMechanicsService.OnCompleteGame += ShowCompleteGame;
             CreatePlayers();
+            _gameMechanicsService.OnCompleteGame += ShowCompleteGame;
+            _gameMechanicsService.PlayerStartTurn += OnStartPlayerTurn;
+            _hudView.OnMenuClickAction += ExitGameSession;
+            _gameMechanicsService.SetupGameMechanics(_playerOne, _playerTwo);
+        }
+
+        private void OnStartPlayerTurn(string playerName)
+        {
+            _hudView.SetPlayerTurnTitle(playerName);
         }
 
         private void ShowCompleteGame(GameResult gameResult)
         {
-            _uiManager.Get<EndGamePopup>().Show(new EndGamePopupArgs(GetEndGameTitle(gameResult), 0)).SubscribeOnClose(
+            string timeFromSessionStart =
+                $"{_sessionTimerService.MinutesFromStart:00}:{_sessionTimerService.SecondsFromStart:00}";
+            _uiManager.Get<EndGamePopup>().Show(new EndGamePopupArgs(GetEndGameTitle(gameResult), timeFromSessionStart)).SubscribeOnClose(
                 _ => RestartLevel());
         }
 
@@ -74,6 +87,11 @@ namespace GameCore.Services.SessionService
             SceneManager.LoadScene(Application.loadedLevel);
         }
 
+        private void ExitGameSession()
+        {
+            SceneManager.LoadScene(MenuName);
+        }
+        
         private void CreatePlayers()
         {
             var gameModeControllers = gameModesContollers[_sessionSettings.BattleType];
@@ -99,6 +117,15 @@ namespace GameCore.Services.SessionService
             }
 
             return "";
+        }
+
+        public void Dispose()
+        {
+            _gameMechanicsService.OnCompleteGame -= ShowCompleteGame;
+            _gameMechanicsService.PlayerStartTurn -= OnStartPlayerTurn;
+            _hudView.OnMenuClickAction -= ExitGameSession;
+            _playerOne.Dispose();
+            _playerTwo.Dispose();
         }
     }
 }

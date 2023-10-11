@@ -2,7 +2,7 @@
 
 namespace GameCore.Entity
 {
-    public interface IEntityStepController
+    public interface IEntityStepController : IDisposable
     {
         event Action<int> OnCompleteStep;
         void StarStep();

@@ -28,8 +28,22 @@ namespace GameCore.Services.HitnService
         public void Initialize()
         {
             if (_gameSessionService.BattleType == SessionBattleType.PlayerVsBot)
+            {
                 ShowHintButton();
-            _hudView.OnHintClickAction += ShowHint;
+                _gameMechanicsService.OnComputerStartTurn += OnComputerStartTurn;
+                _gameMechanicsService.OnComputerEndTurn += OnComputerEndTurn;
+                _hudView.OnHintClickAction += ShowHint;
+            }
+        }
+
+        private void OnComputerStartTurn()
+        {
+            _hudView.SetHintButtonActive(false);
+        }
+        
+        private void OnComputerEndTurn()
+        {
+            _hudView.SetHintButtonActive(true);
         }
 
         private void ShowHintButton()
@@ -45,7 +59,12 @@ namespace GameCore.Services.HitnService
         
         public void Dispose()
         {
-            _hudView.OnHintClickAction -= ShowHint;
+            if (_gameSessionService.BattleType == SessionBattleType.PlayerVsBot)
+            {
+                _hudView.OnHintClickAction -= ShowHint;
+                _gameMechanicsService.OnComputerStartTurn -= OnComputerStartTurn;
+                _gameMechanicsService.OnComputerEndTurn -= OnComputerEndTurn;
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
-using Controllers.SceneView;
+using System;
 using GameCore.Services.GameMechanicsService;
 using GameCore.Services.InputService;
+using GameCore.Services.TimerService;
 
 namespace GameCore.Entity.PlayerFactory
 {
@@ -8,20 +9,21 @@ namespace GameCore.Entity.PlayerFactory
     {
         private IInputService _inputService;
         private IGameMechanicsService _gameMechanicsService;
-        private ISceneView _sceneView;
+        private ITimerService _timerService;
 
         private const string UserDefaultName = "Player";
         private const string ComputerDefaultName = "Computer";
         
-        public PlayerFactory(IGameMechanicsService gameMechanicsService, ISceneView sceneView)
+        public PlayerFactory(IGameMechanicsService gameMechanicsService, IInputService inputService, ITimerService timerService)
         {
             _gameMechanicsService = gameMechanicsService;
-            _sceneView = sceneView;
+            _inputService = inputService;
+            _timerService = timerService;
         }
         
         public PlayerEntity Create(PlayerSide playerSide, PlayerControllerType controllerType)
         {
-            IEntityStepController entityStepController = BuildPlayerController(playerSide, controllerType);
+            IEntityStepController entityStepController = BuildPlayerController(controllerType);
             string playerName = GetPlayerName(playerSide, controllerType);
             return new PlayerEntity(playerName, playerSide, entityStepController);
         }
@@ -33,12 +35,12 @@ namespace GameCore.Entity.PlayerFactory
             return playerName;
         }
 
-        private IEntityStepController BuildPlayerController(PlayerSide playerSide, PlayerControllerType controllerType)
+        private IEntityStepController BuildPlayerController(PlayerControllerType controllerType)
         {
             switch (controllerType)
             {
                 case PlayerControllerType.Bot:
-                    return new BotStepController(playerSide, _gameMechanicsService, _sceneView);
+                    return new BotStepController(_gameMechanicsService, _timerService);
                 default:
                     return new UserStepController(_inputService, _gameMechanicsService);
             }

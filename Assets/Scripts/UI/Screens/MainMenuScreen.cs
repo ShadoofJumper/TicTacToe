@@ -47,14 +47,17 @@ namespace UI.Screens
         private void OnClickPlayerVsPlayer()
         {
             SelectMode(SessionBattleType.PlayerVsPlayer);
+            Hide();
         }
         private void OnClickPlayerVsComputer()
         {
-            SelectMode(SessionBattleType.PlayerVsPlayer);
+            SelectMode(SessionBattleType.PlayerVsBot);
+            Hide();
         }
         private void OnClickComputerVsComputer()
         {
-            SelectMode(SessionBattleType.PlayerVsPlayer);
+            SelectMode(SessionBattleType.BotVsBot);
+            Hide();
         }
 
         private void OnExitGame()

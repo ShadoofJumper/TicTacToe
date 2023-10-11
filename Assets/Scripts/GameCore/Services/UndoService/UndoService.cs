@@ -13,18 +13,35 @@ namespace GameCore.Services.UndoService
         private IGameMechanicsService _gameMechanicsService;
 
         public UndoService(HUDView hudView, 
-            GameSessionService gameSessionService)
+            GameSessionService gameSessionService,
+            IGameMechanicsService gameMechanicsService)
         {
             _hudView = hudView;
             _gameSessionService = gameSessionService;
+            _gameMechanicsService = gameMechanicsService;
         }
 
         
         public void Initialize()
         {
             if (_gameSessionService.BattleType == SessionBattleType.PlayerVsBot)
+            {
                 ShowUndoButton();
-            _hudView.OnUndoClickAction += UndoLastStep;
+                _gameMechanicsService.OnComputerStartTurn += OnComputerStartTurn;
+                _gameMechanicsService.OnComputerEndTurn += OnComputerEndTurn;
+                _hudView.OnUndoClickAction += UndoLastStep;
+            }
+        }
+        
+        
+        private void OnComputerStartTurn()
+        {
+            _hudView.SetUndoButtonActive(false);
+        }
+        
+        private void OnComputerEndTurn()
+        {
+            _hudView.SetUndoButtonActive(true);
         }
         
         private void ShowUndoButton()
@@ -39,7 +56,12 @@ namespace GameCore.Services.UndoService
 
         public void Dispose()
         {
-            _hudView.OnUndoClickAction -= UndoLastStep;
+            if (_gameSessionService.BattleType == SessionBattleType.PlayerVsBot)
+            {
+                _hudView.OnUndoClickAction -= UndoLastStep;
+                _gameMechanicsService.OnComputerStartTurn -= OnComputerStartTurn;
+                _gameMechanicsService.OnComputerEndTurn -= OnComputerEndTurn;
+            }
         }
     }
 }

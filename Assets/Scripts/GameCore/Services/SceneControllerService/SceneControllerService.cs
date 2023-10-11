@@ -31,7 +31,8 @@ namespace GameCore.Services.SceneControllerService
 
         public bool IsCellIndexOnPosition(Vector3 pos, out int result)
         {
-            RaycastHit2D hits = Physics2D.Raycast(pos, UnityEngine.Vector2.zero);
+            Vector3 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            RaycastHit2D hits = Physics2D.Raycast(worldPoint, UnityEngine.Vector2.zero);
             if (hits.collider != null)
             {
                 result = _sceneView.FieldCells.IndexOf(hits.collider);

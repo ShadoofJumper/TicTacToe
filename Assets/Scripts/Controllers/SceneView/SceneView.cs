@@ -8,6 +8,8 @@ namespace Controllers.SceneView
         [SerializeField] private SpriteRenderer _backgroundSpriteRenderer;
         [SerializeField] private BoxCollider2D[] _fieldCells = new BoxCollider2D[]{};
         [SerializeField] private Transform _marksParent;
+        [SerializeField] private Sprite _player1Mark;
+        [SerializeField] private Sprite _player2Mark;
 
         //todo: move prefabs to other access point?
         [SerializeField] private GameObject _markPrefab;
@@ -15,8 +17,6 @@ namespace Controllers.SceneView
 
         private const int FieldSize = 9; 
         
-        private Sprite _player1Mark;
-        private Sprite _player2Mark;
 
         private GameObject[] _fieldMarks = new GameObject[FieldSize];
 

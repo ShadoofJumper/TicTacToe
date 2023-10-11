@@ -9,9 +9,9 @@ namespace UI.Popups
     public sealed class EndGamePopupArgs
     {
         public readonly string Title;
-        public readonly int SessionTime;
+        public readonly string SessionTime;
 
-        public EndGamePopupArgs(string title, int time)
+        public EndGamePopupArgs(string title, string time)
         {
             Title = title;
             SessionTime = time;
@@ -32,7 +32,7 @@ namespace UI.Popups
         protected override void OnDataInitialized()
         {
             _title.text = Data.Title;
-            _time.text = $"Time: {Data.SessionTime} seconds.";
+            _time.text = $"Time: {Data.SessionTime}";
         }
 
     }

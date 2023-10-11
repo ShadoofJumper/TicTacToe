@@ -152,7 +152,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scriptableObjectInstallers: []
-  _monoInstallers: []
+  _monoInstallers:
+  - {fileID: 1222476192}
   _installerPrefabs: []
   _autoRun: 1
   OnPreInstall:
@@ -198,7 +199,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hudView: {fileID: 4881594823132639064, guid: d815326b288b4274fb2e8a075b71d2a4,
     type: 3}
-  _sceneView: {fileID: 0}
+  _sceneView: {fileID: 2178722646974112956, guid: 47196b46b9dacec4a8572859f1332283,
+    type: 3}
 --- !u!1 &1536704094
 GameObject:
   m_ObjectHideFlags: 0

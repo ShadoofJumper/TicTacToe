@@ -31,7 +31,6 @@ namespace Controllers.GameSetupManager
             _currentSessionSettings = new SessionSettings() {
                 BattleType = SessionBattleType.PlayerVsPlayer
             };
-            _uiManager.Get<MainMenuScreen>().Show(null);
         }
         
         public void SetBattleType(SessionBattleType battleType)

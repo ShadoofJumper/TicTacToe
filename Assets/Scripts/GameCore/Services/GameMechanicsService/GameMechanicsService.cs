@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using GameCore.Entity;
-using GameCore.Services.SessionService;
 using UnityEngine;
 using Utilities;
-using Zenject;
 
 namespace GameCore.Services.GameMechanicsService
 {
@@ -21,10 +19,8 @@ namespace GameCore.Services.GameMechanicsService
     /// give access to game field state
     /// check game end
     /// </summary>
-    public class GameMechanicsService : IGameMechanicsService, IInitializable
+    public class GameMechanicsService : IGameMechanicsService
     {
-        private GameSessionService _gameSessionService;
-        
         private PlayerEntity _player1;
         private PlayerEntity _player2;
 
@@ -37,26 +33,29 @@ namespace GameCore.Services.GameMechanicsService
         private int[] _currentField;
         private PlayerEntity _currentStepPlayer;
 
+        public event Action OnComputerStartTurn;
+        public event Action OnComputerEndTurn;
+        public event Action<string> PlayerStartTurn;
         public event Action<int> OnRemoveMark;
         public event Action<int, PlayerSide> OnPlaceMark;
         public event Action<GameResult> OnCompleteGame;
-
-        public GameMechanicsService(GameSessionService gameSessionService)
-        {
-            _gameSessionService = gameSessionService;
-        }
         
-        public void Initialize()
+        public void SetupGameMechanics(PlayerEntity playerOne, PlayerEntity playerTwo)
         {
+            _player1 = playerOne;
+            _player2 = playerTwo;
+            
             _currentField = new int[FieldSize];
-            _player1 = _gameSessionService.PlayerOne;
-            _player2 = _gameSessionService.PlayerTwo;
             StartGame();
         }
 
         public void UndoLastStep()
         {
+            if (IsFieldEmpty())
+                return;
+            
             List<int> cellsUndo = new List<int>();
+            
             cellsUndo.Add(_player2.UndoStep());
             cellsUndo.Add(_player1.UndoStep());
             cellsUndo.ForEach(cellIndex =>
@@ -76,6 +75,8 @@ namespace GameCore.Services.GameMechanicsService
         private void CompleteMove(int cellIndex)
         {
             Debug.Log($"[Game mechanics] CompleteMove {_currentStepPlayer.PlayerSide}, {cellIndex}");
+            if(_currentStepPlayer.IsComputer)
+                OnComputerEndTurn?.Invoke();
             PutValueOnField(cellIndex, _currentStepPlayer.PlayerSide);
             _currentStepPlayer.OnCompleteStepAction -= CompleteMove;
             if (IsGameComplete(out GameResult gameResult))
@@ -90,7 +91,9 @@ namespace GameCore.Services.GameMechanicsService
 
         private void StartPlayerStep()
         {
-            Debug.Log($"[Game mechanics] StartPlayerStep {_currentStepPlayer.PlayerSide}");
+            if(_currentStepPlayer.IsComputer)
+                OnComputerStartTurn?.Invoke();
+            PlayerStartTurn?.Invoke(_currentStepPlayer.PlayerName);
             _currentStepPlayer.OnCompleteStepAction += CompleteMove;
             _currentStepPlayer.StartStep();
         }
@@ -110,12 +113,6 @@ namespace GameCore.Services.GameMechanicsService
         }
         private bool IsGameComplete(out GameResult gameResult)
         {
-            if (!IsBoardFull())
-            {
-                gameResult = GameResult.InProgress;
-                return false;
-            }
-
             if (CheckWin(PlayerSide.Player1))
             {
                 gameResult = GameResult.WinPlayerOne;
@@ -126,11 +123,14 @@ namespace GameCore.Services.GameMechanicsService
                 gameResult = GameResult.WinPlayerTwo;
                 return true;
             }
-            else
+            else if(IsBoardFull())
             {
                 gameResult = GameResult.Draw;
                 return true;
             }
+            
+            gameResult = GameResult.InProgress;
+            return false;
         }
         private bool CheckWin(PlayerSide playerSide)
         {
@@ -169,11 +169,28 @@ namespace GameCore.Services.GameMechanicsService
         #endregion
         
         #region Helper methods
+
+        public bool IsFieldEmpty()
+        {
+            for (int i = 0; i < _currentField.Length; i++)
+            {
+                if (_currentField[i] != _freeCellValue)
+                    return false;
+            }
+
+            return true;
+        }
         
         public int[] GetFreeCells()
         {
-            return _currentField
-                .Where(x => x == _freeCellValue).ToArray();
+            List<int> freeCells = new List<int>();
+            for (int i = 0; i < _currentField.Length; i++)
+            {
+                if(_currentField[i] == _freeCellValue)
+                    freeCells.Add(i);
+            }
+
+            return freeCells.ToArray();
         }
         public bool IsCellFree(int cellIndex)
         {
@@ -198,7 +215,7 @@ namespace GameCore.Services.GameMechanicsService
         private int GetCellIndex(int row, int cell) => cell + row * 3;
 
         #endregion
-
+        
     }        
 
 }
