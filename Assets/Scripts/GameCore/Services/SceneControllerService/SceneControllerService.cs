@@ -36,7 +36,6 @@ namespace GameCore.Services.SceneControllerService
             if (hits.collider != null)
             {
                 result = _sceneView.FieldCells.IndexOf(hits.collider);
-                Debug.Log("SceneControllerService. Try get cell: "+result);
                 return true;
             }
 
@@ -51,7 +50,6 @@ namespace GameCore.Services.SceneControllerService
         
         private void PutMarkInCell(int cellIndex, PlayerSide playerSide)
         {
-            Debug.Log("SceneControllerService. PutMarkInCell: "+cellIndex);
             _sceneView.PlaceMark(playerSide, cellIndex);
         }
 

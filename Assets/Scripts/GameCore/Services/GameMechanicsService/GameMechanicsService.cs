@@ -67,14 +67,12 @@ namespace GameCore.Services.GameMechanicsService
         
         private void StartGame()
         {
-            Debug.Log("[Game mechanics] start game!");
             _currentStepPlayer = _player1;
             StartPlayerStep();
         }
 
         private void CompleteMove(int cellIndex)
         {
-            Debug.Log($"[Game mechanics] CompleteMove {_currentStepPlayer.PlayerSide}, {cellIndex}");
             if(_currentStepPlayer.IsComputer)
                 OnComputerEndTurn?.Invoke();
             PutValueOnField(cellIndex, _currentStepPlayer.PlayerSide);
@@ -202,7 +200,6 @@ namespace GameCore.Services.GameMechanicsService
             int opponentValue = _currentStepPlayer.PlayerSide == PlayerSide.Player2 ? _player1CellValue : _player2CellValue;
             
             int bestMove = TicTacToeAI.GetBestMove(_currentField, playerValue, opponentValue, _freeCellValue);
-            Debug.Log($"Get best move: [{_currentStepPlayer}], {playerValue}, {opponentValue}. index:{bestMove}");
             return bestMove;
         }
 

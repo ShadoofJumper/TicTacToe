@@ -33,7 +33,6 @@ namespace GameCore.Services.SessionTimerService
         private void UpdateTimer()
         {
             _hudView.SetTime(Mathf.FloorToInt(_elapsedTime / 60), Mathf.FloorToInt(_elapsedTime % 60));
-            Debug.Log("Elapsed Time: " + string.Format("{0:00}:{1:00}", MinutesFromStart, SecondsFromStart));
         }
     }
 }
